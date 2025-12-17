@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>7 Letter Generator</title>
+
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    text-align: center;
+    background: #f2f5f9;
+    margin: 0;
+    padding-top: 25vh;
+  }
+
+  #output {
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 8px;
+    margin-bottom: 30px;
+    color: #1d4ed8;
+  }
+
+  button {
+    font-size: 1.2rem;
+    padding: 14px 30px;
+    border-radius: 10px;
+    border: none;
+    background: #1d4ed8;
+    color: white;
+  }
+
+  button:active {
+    background: #2563eb;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="output">LOADING</div>
+
+<button onclick="generate()">Next Round</button>
+
+<script>
+  // LETTERS
+  var letters = [
+    "A","B","C","D","E","F","G","H","I","J","K","L","M",
+    "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
+  ];
+
+  // CUMULATIVE PROBABILITIES (must increase)
+  var cumProbs = [
+    0.155, 0.196, 0.256, 0.296, 0.309, 0.344, 0.382,
+    0.450, 0.532, 0.534, 0.547, 0.587, 0.630,
+    0.658, 0.729, 0.769, 0.770, 0.800, 0.877,
+    1.000, 1.020, 1.030, 1.060, 1.070, 1.090, 1.100
+  ];
+
+  function sampleLetter() {
+    var r = Math.random();
+    for (var i = 0; i < cumProbs.length; i++) {
+      if (r < cumProbs[i]) return letters[i];
+    }
+    return "Z";
+  }
+
+  function random7Letters() {
+    var word = "";
+    for (var i = 0; i < 7; i++) {
+      word += sampleLetter();
+    }
+    return word;
+  }
+
+  function generate() {
+    document.getElementById("output").innerHTML = random7Letters();
+  }
+
+  // FORCE first generation
+  generate();
+</script>
+
+</body>
+</html>
