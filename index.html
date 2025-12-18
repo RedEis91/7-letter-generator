@@ -1,87 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7-Letter Generator</title>
 
-<title>7 Letter Generator</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      text-align: center;
+      background: #f2f5f9;
+      margin: 0;
+      padding-top: 20vh;
+    }
 
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-    text-align: center;
-    background: #f2f5f9;
-    margin: 0;
-    padding-top: 25vh;
-  }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
 
-  #output {
-    font-size: 3rem;
-    font-weight: bold;
-    letter-spacing: 8px;
-    margin-bottom: 30px;
-    color: #1d4ed8;
-  }
+    #output {
+      font-size: 3rem;
+      letter-spacing: 8px;
+      font-weight: bold;
+      color: #1d4ed8;
+      margin-bottom: 30px;
+    }
 
-  button {
-    font-size: 1.2rem;
-    padding: 14px 30px;
-    border-radius: 10px;
-    border: none;
-    background: #1d4ed8;
-    color: white;
-  }
+    button {
+      font-size: 1.2rem;
+      padding: 14px 28px;
+      border-radius: 8px;
+      border: none;
+      background: #1d4ed8;
+      color: white;
+      cursor: pointer;
+    }
 
-  button:active {
-    background: #2563eb;
-  }
-</style>
+    button:active {
+      background: #2563eb;
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="output">LOADING</div>
+  <h1>Random 7-Letter Generator</h1>
+  <div id="output">— — — — — — —</div>
+  <button id="nextRound">Next Round</button>
 
-<button onclick="generate()">Next Round</button>
+  <script>
+    // Wait until DOM is ready (mobile-safe)
+    document.addEventListener("DOMContentLoaded", function () {
 
-<script>
-  // LETTERS
-  var letters = [
-    "A","B","C","D","E","F","G","H","I","J","K","L","M",
-    "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
-  ];
+      var firstLetterFreq = {
+        A: 0.155, B: 0.041, C: 0.060, D: 0.040, E: 0.013,
+        F: 0.035, G: 0.038, H: 0.068, I: 0.082, J: 0.002,
+        K: 0.013, L: 0.040, M: 0.043, N: 0.028, O: 0.071,
+        P: 0.040, Q: 0.001, R: 0.030, S: 0.077, T: 0.159,
+        U: 0.020, V: 0.010, W: 0.038, X: 0.001, Y: 0.020, Z: 0.001
+      };
 
-  // CUMULATIVE PROBABILITIES (must increase)
-  var cumProbs = [
-    0.155, 0.196, 0.256, 0.296, 0.309, 0.344, 0.382,
-    0.450, 0.532, 0.534, 0.547, 0.587, 0.630,
-    0.658, 0.729, 0.769, 0.770, 0.800, 0.877,
-    1.000, 1.020, 1.030, 1.060, 1.070, 1.090, 1.100
-  ];
+      // Normalize distribution
+      var sum = 0;
+      for (var k in firstLetterFreq) sum += firstLetterFreq[k];
+      for (var k2 in firstLetterFreq) firstLetterFreq[k2] /= sum;
 
-  function sampleLetter() {
-    var r = Math.random();
-    for (var i = 0; i < cumProbs.length; i++) {
-      if (r < cumProbs[i]) return letters[i];
-    }
-    return "Z";
-  }
+      // Build cumulative distribution
+      var letters = [];
+      var cumProbs = [];
+      var cum = 0;
 
-  function random7Letters() {
-    var word = "";
-    for (var i = 0; i < 7; i++) {
-      word += sampleLetter();
-    }
-    return word;
-  }
+      for (var letter in firstLetterFreq) {
+        letters.push(letter);
+        cum += firstLetterFreq[letter];
+        cumProbs.push(cum);
+      }
 
-  function generate() {
-    document.getElementById("output").innerHTML = random7Letters();
-  }
+      function sampleLetter() {
+        var r = Math.random();
+        for (var i = 0; i < cumProbs.length; i++) {
+          if (r < cumProbs[i]) return letters[i];
+        }
+        return letters[letters.length - 1];
+      }
 
-  // FORCE first generation
-  generate();
-</script>
+      function random7Letters() {
+        var result = "";
+        for (var i = 0; i < 7; i++) {
+          result += sampleLetter();
+        }
+        return result;
+      }
+
+      function generateWord() {
+        document.getElementById("output").textContent = random7Letters();
+      }
+
+      // Button click handler (mobile-safe)
+      document
+        .getElementById("nextRound")
+        .addEventListener("click", generateWord);
+
+      // Initial word
+      generateWord();
+    });
+  </script>
 
 </body>
 </html>
+
